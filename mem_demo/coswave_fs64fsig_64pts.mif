@@ -1,0 +1,89 @@
+-- Copyright (C) 1991-2013 Altera Corporation
+-- Your use of Altera Corporation's design tools, logic functions 
+-- and other software and tools, and its AMPP partner logic 
+-- functions, and any output files from any of the foregoing 
+-- (including device programming or simulation files), and any 
+-- associated documentation or information are expressly subject 
+-- to the terms and conditions of the Altera Program License 
+-- Subscription Agreement, Altera MegaCore Function License 
+-- Agreement, or other applicable license agreement, including, 
+-- without limitation, that your use is for the sole purpose of 
+-- programming logic devices manufactured by Altera and sold by 
+-- Altera or its authorized distributors.  Please refer to the 
+-- applicable agreement for further details.
+
+-- Quartus II generated Memory Initialization File (.mif)
+
+WIDTH=16;
+DEPTH=512;
+
+ADDRESS_RADIX=UNS;
+DATA_RADIX=DEC;
+
+CONTENT BEGIN
+	0    :   0;
+	1    :   1606;
+	2    :   3196;
+	3    :   4756;
+	4    :   6270;
+	5    :   7723;
+	6    :   9102;
+	7    :   10394;
+	8    :   11585;
+	9    :   12665;
+	10   :   13623;
+	11   :   14449;
+	12   :   15137;
+	13   :   15679;
+	14   :   16069;
+	15   :   16305;
+	16   :   16384;
+	17   :   16305;
+	18   :   16069;
+	19   :   15679;
+	20   :   15137;
+	21   :   14449;
+	22   :   13623;
+	23   :   12665;
+	24   :   11585;
+	25   :   10394;
+	26   :   9102;
+	27   :   7723;
+	28   :   6270;
+	29   :   4756;
+	30   :   3196;
+	31   :   1606;
+	32   :   0;
+	33   :   -1606;
+	34   :   -3196;
+	35   :   -4756;
+	36   :   -6270;
+	37   :   -7723;
+	38   :   -9102;
+	39   :   -10394;
+	40   :   -11585;
+	41   :   -12665;
+	42   :   -13623;
+	43   :   -14449;
+	44   :   -15137;
+	45   :   -15679;
+	46   :   -16069;
+	47   :   -16305;
+	48   :   -16384;
+	49   :   -16305;
+	50   :   -16069;
+	51   :   -15679;
+	52   :   -15137;
+	53   :   -14449;
+	54   :   -13623;
+	55   :   -12665;
+	56   :   -11585;
+	57   :   -10394;
+	58   :   -9102;
+	59   :   -7723;
+	60   :   -6270;
+	61   :   -4756;
+	62   :   -3196;
+	63   :   -1606;
+	[64..511]  :   0;
+END;
