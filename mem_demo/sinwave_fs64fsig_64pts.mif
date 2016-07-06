@@ -1,0 +1,89 @@
+-- Copyright (C) 1991-2013 Altera Corporation
+-- Your use of Altera Corporation's design tools, logic functions 
+-- and other software and tools, and its AMPP partner logic 
+-- functions, and any output files from any of the foregoing 
+-- (including device programming or simulation files), and any 
+-- associated documentation or information are expressly subject 
+-- to the terms and conditions of the Altera Program License 
+-- Subscription Agreement, Altera MegaCore Function License 
+-- Agreement, or other applicable license agreement, including, 
+-- without limitation, that your use is for the sole purpose of 
+-- programming logic devices manufactured by Altera and sold by 
+-- Altera or its authorized distributors.  Please refer to the 
+-- applicable agreement for further details.
+
+-- Quartus II generated Memory Initialization File (.mif)
+
+WIDTH=16;
+DEPTH=512;
+
+ADDRESS_RADIX=UNS;
+DATA_RADIX=HEX;
+
+CONTENT BEGIN
+	0    :   0000;
+	1    :   0646;
+	2    :   0C7C;
+	3    :   1294;
+	4    :   187E;
+	5    :   1E2B;
+	6    :   238E;
+	7    :   289A;
+	8    :   2D41;
+	9    :   3179;
+	10   :   3537;
+	11   :   3871;
+	12   :   3B21;
+	13   :   3D3F;
+	14   :   3EC5;
+	15   :   3FB1;
+	16   :   4000;
+	17   :   3FB1;
+	18   :   3EC5;
+	19   :   3D3F;
+	20   :   3B21;
+	21   :   3871;
+	22   :   3537;
+	23   :   3179;
+	24   :   2D41;
+	25   :   289A;
+	26   :   238E;
+	27   :   1E2B;
+	28   :   187E;
+	29   :   1294;
+	30   :   0C7C;
+	31   :   0646;
+	32   :   0000;
+	33   :   F9BA;
+	34   :   F384;
+	35   :   ED6C;
+	36   :   E782;
+	37   :   E1D5;
+	38   :   DC72;
+	39   :   D766;
+	40   :   D2BF;
+	41   :   CE87;
+	42   :   CAC9;
+	43   :   C78F;
+	44   :   C4DF;
+	45   :   C2C1;
+	46   :   C13B;
+	47   :   C04F;
+	48   :   C000;
+	49   :   C04F;
+	50   :   C13B;
+	51   :   C2C1;
+	52   :   C4DF;
+	53   :   C78F;
+	54   :   CAC9;
+	55   :   CE87;
+	56   :   D2BF;
+	57   :   D766;
+	58   :   DC72;
+	59   :   E1D5;
+	60   :   E782;
+	61   :   ED6C;
+	62   :   F384;
+	63   :   F9BA;
+	[64..511]  :   0000;
+END;
