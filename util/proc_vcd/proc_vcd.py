@@ -39,7 +39,6 @@ def create_csv(fn, *sig_list):
     if __name__ == "__main__":
         # command line workaround
         sig_word_lens = tuple([int(k) for k in sig_word_lens])
-    ipdb.set_trace()
     vcd_dict = parse_vcd(fn, siglist=list(sig_list))
     for sig_val in vcd_dict.values():
       csv_fn = ''
