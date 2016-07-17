@@ -23,8 +23,8 @@ c='_tmp.vzt '
 d=$a$filename$b$filename$c
 eval $d
 
-e='vzt2vcd '
-f='-c > '
+e='vzt2vcd -c '
+f=' > '
 g='_new.vcd'
 h=$e$filename$c$f$filename$g
 eval $h

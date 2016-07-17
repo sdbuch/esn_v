@@ -14,3 +14,5 @@ following or modify to use your favorite package manager:
 
 ```sudo apt-get install gtkwave```
 
+More information can be found at the package's official site
+[here](http://gtkwave.sourceforge.net/)
