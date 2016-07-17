@@ -12,8 +12,7 @@ def create_csv(fn, *sig_list):
 
   Keyword arguments:
     fn        -- the local path of the .vcd file
-    word_len  -- the number of bits in the input/output data words
-    sig_list --  any number of string-int argument pairs
+    sig_list  -- any number of string-int argument pairs
                  consisting of the names of the signals in the
                  .vcd file that should be processed to create
                  the .csv outputs and their corresponding word
