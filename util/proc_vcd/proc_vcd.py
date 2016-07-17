@@ -35,13 +35,16 @@ def create_csv(fn, *sig_list):
   try:
     sig_names, sig_word_lens = zip(*[(sig_list[i],
         sig_list[i+1]) for i in range(0, len(sig_list), 2)])
+
     if __name__ == "__main__":
         # command line workaround
         sig_word_lens = tuple([int(k) for k in sig_word_lens])
     vcd_dict = parse_vcd(fn, siglist=list(sig_list))
+
     for sig_val in vcd_dict.values():
       csv_fn = ''
       bus_len = int(sig_val['nets'][0]['size'])
+
       for net_val in sig_val['nets']:
         if bus_len != int(net_val['size']):
           ipdb.set_trace()
@@ -53,9 +56,11 @@ def create_csv(fn, *sig_list):
         csv_fn = "%s_%s-%s" % (csv_fn, net_val['hier'],
             net_val['name'].replace("[","").replace("]",""))
         csv_fn = "%s%s" % (csv_fn, ".csv")
+        
       with open(csv_fn, 'wb') as csvfile:
         csvwriter = csv.writer(csvfile, delimiter=',', quotechar='"',
             quoting=csv.QUOTE_MINIMAL)
+
         for data_pt in sig_val['tv']:
           # parse time value
           time_val = float(data_pt[0])
@@ -63,6 +68,7 @@ def create_csv(fn, *sig_list):
           if any([k in iter(data_pt[1]) for k in ['z', 'x', '?']]):
             # this could be improved to throw away only the out of band bits
             sig_data_int = (bus_len//word_len)*['inf']
+
           else:
             sig_data_raw = "%s%s" % ((bus_len-len(data_pt[1]))*'0', data_pt[1])
             sig_data = [sig_data_raw[i:i+word_len] for i in

@@ -6,14 +6,14 @@ from subprocess import check_call
 from itertools import chain
 import ipdb
 
-global vcd_fn = 'pe_generic.vcd'
-global sig_list = ['pe_generic_tb.D[255:0]',
+vcd_fn = 'pe_generic'
+sig_list = ['pe_generic_tb.D[255:0]',
         'pe_generic_tb.W[1023:0]', 'pe_generic_tb.Q[511:0]',
         'pe_generic_tb.DUT.T[2111:0]',
         'pe_generic_tb.DUT.S[1055:0]',
         'pe_generic_tb.DUT.P[139:0]',
         'pe_generic_tb.DUT.L[63:0]']
-global word_len_list = [16, 16, 16, 33, 33, 35, 16]
+word_len_list = [16, 16, 16, 33, 33, 35, 16]
 
 def main():
     """
@@ -37,11 +37,14 @@ def main():
     - The esn_v/util/proc_vcd directory needs to be on the
       system $PYTHONPATH environment variable
     """
-    ipdb.set_trace()
-    check_call(["vcd_conv.sh", vcd_fn])
+    global vcd_fn
+    global sig_list
+    global word_len_list
+
+    check_call(["vcd_conv.sh", "%s.vcd" % (vcd_fn,)])
     arg_list = list(chain(*zip(sig_list,word_len_list)))
     processed_vcd_fn = "%s_new.vcd" % (vcd_fn, )
-    create_csv(processed_vcd_fn, arg_list)
+    create_csv(processed_vcd_fn, *arg_list)
 
 
 if __name__ == "__main__":
