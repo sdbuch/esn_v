@@ -60,5 +60,6 @@ end
 % format and write data to a file
 fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), w/4);
 data_out = num2str([(0:(length(u_sub)-1)).' data], fmtstr);
+keyboard
 dlmwrite('sin_data.txt', data_out, '');
 
