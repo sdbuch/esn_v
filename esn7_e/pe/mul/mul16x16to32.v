@@ -4,7 +4,7 @@
 // MODULE: lpm_mult 
 
 // ============================================================
-// File Name: mul18x18.v
+// File Name: mul16x16to32.v
 // Megafunction Name(s):
 // 			lpm_mult
 //
@@ -36,17 +36,17 @@
 // synopsys translate_off
 `timescale 1 ps / 1 ps
 // synopsys translate_on
-module mul18x18 (
+module mul16x16to32 (
 	dataa,
 	datab,
 	result);
 
 	input	[15:0]  dataa;
 	input	[15:0]  datab;
-	output	[32:0]  result;
+	output	[31:0]  result;
 
-	wire [32:0] sub_wire0;
-	wire [32:0] result = sub_wire0[32:0];
+	wire [31:0] sub_wire0;
+	wire [31:0] result = sub_wire0[31:0];
 
 	lpm_mult	lpm_mult_component (
 				.dataa (dataa),
@@ -62,7 +62,7 @@ module mul18x18 (
 		lpm_mult_component.lpm_type = "LPM_MULT",
 		lpm_mult_component.lpm_widtha = 16,
 		lpm_mult_component.lpm_widthb = 16,
-		lpm_mult_component.lpm_widthp = 33;
+		lpm_mult_component.lpm_widthp = 32;
 
 
 endmodule
@@ -70,19 +70,19 @@ endmodule
 // ============================================================
 // CNX file retrieval info
 // ============================================================
-// Retrieval info: PRIVATE: AutoSizeResult NUMERIC "0"
+// Retrieval info: PRIVATE: AutoSizeResult NUMERIC "1"
 // Retrieval info: PRIVATE: B_isConstant NUMERIC "0"
 // Retrieval info: PRIVATE: ConstantB NUMERIC "0"
 // Retrieval info: PRIVATE: INTENDED_DEVICE_FAMILY STRING "Cyclone IV E"
-// Retrieval info: PRIVATE: LPM_PIPELINE NUMERIC "1"
+// Retrieval info: PRIVATE: LPM_PIPELINE NUMERIC "0"
 // Retrieval info: PRIVATE: Latency NUMERIC "0"
 // Retrieval info: PRIVATE: SYNTH_WRAPPER_GEN_POSTFIX STRING "1"
 // Retrieval info: PRIVATE: SignedMult NUMERIC "1"
 // Retrieval info: PRIVATE: USE_MULT NUMERIC "1"
-// Retrieval info: PRIVATE: ValidConstant NUMERIC "0"
+// Retrieval info: PRIVATE: ValidConstant NUMERIC "1"
 // Retrieval info: PRIVATE: WidthA NUMERIC "16"
 // Retrieval info: PRIVATE: WidthB NUMERIC "16"
-// Retrieval info: PRIVATE: WidthP NUMERIC "33"
+// Retrieval info: PRIVATE: WidthP NUMERIC "32"
 // Retrieval info: PRIVATE: aclr NUMERIC "0"
 // Retrieval info: PRIVATE: clken NUMERIC "0"
 // Retrieval info: PRIVATE: new_diagram STRING "1"
@@ -93,18 +93,18 @@ endmodule
 // Retrieval info: CONSTANT: LPM_TYPE STRING "LPM_MULT"
 // Retrieval info: CONSTANT: LPM_WIDTHA NUMERIC "16"
 // Retrieval info: CONSTANT: LPM_WIDTHB NUMERIC "16"
-// Retrieval info: CONSTANT: LPM_WIDTHP NUMERIC "33"
+// Retrieval info: CONSTANT: LPM_WIDTHP NUMERIC "32"
 // Retrieval info: USED_PORT: dataa 0 0 16 0 INPUT NODEFVAL "dataa[15..0]"
 // Retrieval info: USED_PORT: datab 0 0 16 0 INPUT NODEFVAL "datab[15..0]"
-// Retrieval info: USED_PORT: result 0 0 33 0 OUTPUT NODEFVAL "result[32..0]"
+// Retrieval info: USED_PORT: result 0 0 32 0 OUTPUT NODEFVAL "result[31..0]"
 // Retrieval info: CONNECT: @dataa 0 0 16 0 dataa 0 0 16 0
 // Retrieval info: CONNECT: @datab 0 0 16 0 datab 0 0 16 0
-// Retrieval info: CONNECT: result 0 0 33 0 @result 0 0 33 0
-// Retrieval info: GEN_FILE: TYPE_NORMAL mul18x18.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL mul18x18.inc FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL mul18x18.cmp FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL mul18x18.bsf TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL mul18x18_inst.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL mul18x18_bb.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL mul18x18_syn.v TRUE
+// Retrieval info: CONNECT: result 0 0 32 0 @result 0 0 32 0
+// Retrieval info: GEN_FILE: TYPE_NORMAL mul16x16to32.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL mul16x16to32.inc FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL mul16x16to32.cmp FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL mul16x16to32.bsf FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL mul16x16to32_inst.v FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL mul16x16to32_bb.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL mul16x16to32_syn.v TRUE
 // Retrieval info: LIB_FILE: lpm
