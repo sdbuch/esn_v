@@ -9,16 +9,29 @@ df = @(x) 1-tanh(x).^2;
 
 for k = 1:length(i_wordlen)
   i_fraclen = i_wordlen(k)-i_intlen;
-  inputs = uint16(0:(2^(i_fraclen+i_intlen)-1));
+  inputs = int16(-2^(i_fraclen+i_intlen):(2^(i_fraclen+i_intlen)-1));
   
-  outputs = uint16(zeros(length(inputs),1));
-  d_outputs = uint16(zeros(length(inputs),1));
+  
+  outputs = zeros(length(inputs),1);
+  d_outputs = zeros(length(inputs),1);
   
   for i = 1:length(inputs)
-    outputs(i) = uint16(round(f(double(inputs(i))/2^i_fraclen)*(2^o_fraclen-1)));
-    d_outputs(i) = uint16(round(df(double(inputs(i))/2^i_fraclen)*(2^o_fraclen-1)));
+    outputs(i) = round(f(double(inputs(i))/2^i_fraclen)*(2^o_fraclen));
+    d_outputs(i) = round(df(double(inputs(i))/2^i_fraclen)*(2^o_fraclen));
   end
   
+  % convert to 2's complement
+  tmp = outputs;
+  dtmp = d_outputs;
+  outputs(outputs<0) = 2^o_wordlen+outputs(outputs<0);
+  d_outputs(d_outputs<0) = 2^o_wordlen+d_outputs(d_outputs<0);
+  % reshape for address lookups
+  outputs = reshape(outputs,[],2);
+  outputs = circshift(outputs,[0,1]);
+  outputs = outputs(:);
+  d_outputs = reshape(d_outputs,[],2);
+  d_outputs = circshift(d_outputs,[0,1]);
+  d_outputs = d_outputs(:);
   
   if 1
     real_outputs = double(outputs)/2^o_fraclen;
@@ -31,6 +44,7 @@ for k = 1:length(i_wordlen)
   end
   
 end
+
 
 %% 1/x LUTs (for the NORM LOOKUP---OPTIMIZED FOR SIN^3(X) TASK)
 o_wordlen = 16;
