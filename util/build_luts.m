@@ -109,7 +109,6 @@ end
 LUT1 = round(intercepts*2^o_fraclen);
 dLUT1 = round(d_outputs*2^o_fraclen);
 dLUT1(dLUT1 < 0) =  2^o_wordlen - abs(dLUT1(dLUT1<0));
-keyboard
 
 
 % LUT2
