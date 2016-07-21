@@ -16,28 +16,23 @@ module pe_8x4_16bit #(parameter WORD_LEN = 16, NEU_IN=8, NEU_OUT = 4)
 input ce, clk;
 
 // Input neurons
-input [(WORD_LEN*NEU_IN-1):0] D;								
+input [(WORD_LEN*NEU_IN-1):0] DATA;
 
 // Synapses
-input [(WORD_LEN*NEU_IN*NEU_OUT-1):0] W;
+input [(WORD_LEN*NEU_IN*NEU_OUT-1):0] WEIGHT;
 
 // Product intermediate outputs
-// An extra bit is added by the multipliers to their outputs
-// to account for the LPM_ADD_SUB constraints later on
-wire [((2*WORD_LEN+1)*NEU_IN*NEU_OUT-1):0] T;
+wire [((2*WORD_LEN)*NEU_IN*NEU_OUT-1):0] PROD;
 
-// First Layer Sum Intermediate Outputs
-wire [((2*WORD_LEN+1)*(NEU_IN*NEU_OUT >> 1)-1):0] S;
 
 // Second Layer Adder (parallel adders) Intermediate Outputs
-wire [(((2*WORD_LEN)+$clog2((NEU_IN >> 1)))*NEU_OUT-1):0] P;
+wire [(((2*WORD_LEN)+5)*NEU_OUT-1):0] SUM;
 
 // Transfer Function Layer Outputs
-wire [(WORD_LEN*NEU_OUT-1):0] L;
+wire [(WORD_LEN*NEU_OUT-1):0] LUT_INTERP;
 
 // Outputs
-output reg [(WORD_LEN*(NEU_IN*NEU_OUT >> 1)-1):0] Q;
-
+output reg [(WORD_LEN*NEU_OUT-1):0] Q;
 
 // Instantiation based submodules
 // Includes MULTIPLIERS, 2to1 ADDERS, PARALLEL ADDERS
@@ -46,39 +41,53 @@ generate
 
 // Multipliers
 for (n = 1; n <= NEU_IN*NEU_OUT; n=n+1) begin: MULTS
-  mul18x18 MU (
-    .dataa(D[((((n-1) % NEU_IN)+1)*WORD_LEN-1):(((n-1) % NEU_IN)*WORD_LEN)]),
-    .datab(W[(n*WORD_LEN-1):((n-1)*WORD_LEN)]),
-    .result(T[(n*(2*WORD_LEN+1)-1):((n-1)*(2*WORD_LEN+1))])
+  mul16x16to32 MU (
+    .dataa(DATA[((((n-1) % NEU_IN)+1)*WORD_LEN-1):(((n-1) % NEU_IN)*WORD_LEN)]),
+    .datab(WEIGHT[(n*WORD_LEN-1)-:WORD_LEN]),
+    .result(PROD[(n*(2*WORD_LEN)-1)-:2*WORD_LEN])
   );
 end
-
-// 2 to 1 Adders
-for (n = 0; n < (NEU_IN*NEU_OUT >> 1); n=n+1) begin: SERIAL_ADDS
-  add32x32 AD (
-    .dataa (T[((2*n+1)*(2*WORD_LEN+1)-1):((2*n)*(2*WORD_LEN+1))]),
-    .datab (T[((2*n+2)*(2*WORD_LEN+1)-1):((2*n+1)*(2*WORD_LEN+1))]),
-    .result(S[((n+1)*(2*WORD_LEN+1)-1):(n*(2*WORD_LEN+1))])
-  );
-end
-
-//Ideally the below should be configured from an external script. The parallel adder 
-//has to be set up with (NEU_IN >> 1) inputs, and we need NEU_OUT of them
-//Implicitly in the below code, (NEU_IN >> 1) == 8 or it breaks...
 
 // Parallel Adders
+// Sign extend the first 7 product inputs
+// Zero-pad the back of the last product input
+// If the point position of the input u changes, the pad sizes should change too
 for (n = 0; n < NEU_OUT; n=n+1) begin: PARALLEL_ADDS
-  padd32x32 PA (
-    .data0x(S[(((NEU_IN>>1)*n+1)*(2*WORD_LEN+1)-1)-:2*WORD_LEN]),
-    .data1x(S[(((NEU_IN>>1)*n+2)*(2*WORD_LEN+1)-1)-:2*WORD_LEN]),
-    .data2x(S[(((NEU_IN>>1)*n+3)*(2*WORD_LEN+1)-1)-:2*WORD_LEN]),
-    .data3x(S[(((NEU_IN>>1)*n+4)*(2*WORD_LEN+1)-1)-:2*WORD_LEN]),
-    .data4x(S[(((NEU_IN>>1)*n+5)*(2*WORD_LEN+1)-1)-:2*WORD_LEN]),
-    .data5x(S[(((NEU_IN>>1)*n+6)*(2*WORD_LEN+1)-1)-:2*WORD_LEN]),
-    .data6x(S[(((NEU_IN>>1)*n+7)*(2*WORD_LEN+1)-1)-:2*WORD_LEN]),
-    .data7x(S[(((NEU_IN>>1)*n+8)*(2*WORD_LEN+1)-1)-:2*WORD_LEN]),
+  // Can do sign extension with $signed() perhaps?
+  padd_8x36signed_to_1x38signed PA (
+    .data0x(
+      {{(3){PROD[((NEU_IN*n+1)*(2*WORD_LEN)-1)]}},
+      PROD[((NEU_IN*n+1)*(2*WORD_LEN)-1)-:2*WORD_LEN]}
+    ),
+    .data1x(
+      {{(3){PROD[((NEU_IN*n+2)*(2*WORD_LEN)-1)]}},
+      PROD[((NEU_IN*n+2)*(2*WORD_LEN)-1)-:2*WORD_LEN]}
+    ),
+    .data2x(
+      {{(3){PROD[((NEU_IN*n+3)*(2*WORD_LEN)-1)]}},
+      PROD[((NEU_IN*n+3)*(2*WORD_LEN)-1)-:2*WORD_LEN]}
+    ),
+    .data3x(
+      {{(3){PROD[((NEU_IN*n+4)*(2*WORD_LEN)-1)]}},
+      PROD[((NEU_IN*n+4)*(2*WORD_LEN)-1)-:2*WORD_LEN]}
+    ),
+    .data4x(
+      {{(3){PROD[((NEU_IN*n+5)*(2*WORD_LEN)-1)]}},
+      PROD[((NEU_IN*n+5)*(2*WORD_LEN)-1)-:2*WORD_LEN]}
+    ),
+    .data5x(
+      {{(3){PROD[((NEU_IN*n+6)*(2*WORD_LEN)-1)]}},
+      PROD[((NEU_IN*n+6)*(2*WORD_LEN)-1)-:2*WORD_LEN]}
+    ),
+    .data6x(
+      {{(3){PROD[((NEU_IN*n+7)*(2*WORD_LEN)-1)]}},
+      PROD[((NEU_IN*n+7)*(2*WORD_LEN)-1)-:2*WORD_LEN]}
+    ),
+    .data7x(
+      {PROD[((NEU_IN*n+8)*(2*WORD_LEN)-1)-:2*WORD_LEN], 3'b0}
+    ),
     .result(
-      P[((n+1)*((2*WORD_LEN)+$clog2((NEU_IN>>1)))-1)-:((2*WORD_LEN)+$clog2((NEU_IN>>1)))]
+      SUM[((n+1)*((2*WORD_LEN)+6)-1)-:((2*WORD_LEN)+5)]
     )
   );
 end
@@ -86,66 +95,34 @@ end
 endgenerate
 
 // TRANSFER FUNCTION LUT BLOCK
-tf_block TF0(
+tf_tanh #(2*WORD_LEN+6, NEU_OUT) TF0(
   .clk(clk),
-  .mode(mode),
-  .I3(P[(4*((2*WORD_LEN)+$clog2((NEU_IN>>1)))-1)-:WORD_LEN]),
-  .I2(P[(3*((2*WORD_LEN)+$clog2((NEU_IN>>1)))-1)-:WORD_LEN]),
-  .I1(P[(2*((2*WORD_LEN)+$clog2((NEU_IN>>1)))-1)-:WORD_LEN]),
-  .I0(P[(1*((2*WORD_LEN)+$clog2((NEU_IN>>1)))-1)-:WORD_LEN]),
-  .Q3(L[(4*WORD_LEN-1):(3*WORD_LEN)]),
-  .Q2(L[(3*WORD_LEN-1):(2*WORD_LEN)]),
-  .Q1(L[(2*WORD_LEN-1):(1*WORD_LEN)]),
-  .Q0(L[(1*WORD_LEN-1):(0*WORD_LEN)])
+  .IBUS(SUM),
+  .OBUS(LUT_INTERP)
 );
 
 
 // OUTPUT STAGE
 always @(posedge clk) begin: OUTPUT
-  integer i;
-  case ({ce, mode})
+  //integer i;
+  case (ce)
     // CE=1'b0: LOCK UP AND FORWARD LAST OUTPUT
-    3'b000: begin
+    1'b0: begin
       Q <= Q;
-    end
-
-    3'b001: begin
-      Q <= Q;
-    end
-    3'b010: begin
-      Q <= Q;
-    end
-    3'b011: begin
-      Q <= Q;
-    end
-
-    // MODE =2'b00 and CE=1'b1: WEIGHT UPDATE MODE
-    3'b100: begin
-      for (i = 0; i < (NEU_IN*NEU_OUT >> 1); i=i+1) begin
-        Q[((i+1)*WORD_LEN-1)-:WORD_LEN]
-        <= S[((i+1)*(2*WORD_LEN+1)-1)-:WORD_LEN];
-      end
     end
 
     // MODE=2'b01 and CE=1'b1: BLOCK MVM MODE
-    3'b101: begin
-      for (i = 0; i < NEU_OUT; i=i+1) begin
-        Q[((i+1)*WORD_LEN-1)-:WORD_LEN] <= L[((i+1)*WORD_LEN-1)-:WORD_LEN];
-      end
-      for (i = NEU_OUT; i < (NEU_IN*NEU_OUT>>1); i=i+1) begin
+    1'b1: begin
+      Q <= LUT_INTERP;
+      // Next lines are for use in weight update enabled PEs
+      /*for (i = NEU_OUT; i < (NEU_IN*NEU_OUT>>1); i=i+1) begin
         Q[((i+1)*WORD_LEN-1)-:WORD_LEN] <= {(WORD_LEN){1'b0}};
-      end
+      end*/
     end
 
-    // ALL OTHER MODES... KEEP BLOCK MVM MODE
-    /* synthesis keep */
+    // Default mode... lock up and forward last output  
     default: begin
-      for (i = 0; i < NEU_OUT; i=i+1) begin
-        Q[((i+1)*WORD_LEN-1)-:WORD_LEN] <= L[((i+1)*WORD_LEN-1)-:WORD_LEN];
-      end
-      for (i = NEU_OUT; i < (NEU_IN*NEU_OUT>>1); i=i+1) begin
-        Q[((i+1)*WORD_LEN-1)-:WORD_LEN] <= {(WORD_LEN){1'b0}};
-      end
+      Q <= Q;
     end
   endcase
 

@@ -55,9 +55,9 @@ module padd_8x36signed_to_1x38signed (
 	input	[34:0]  data5x;
 	input	[34:0]  data6x;
 	input	[34:0]  data7x;
-	output	[36:0]  result;
+	output	[37:0]  result;
 
-	wire [36:0] sub_wire0;
+	wire [37:0] sub_wire0;
 	wire [34:0] sub_wire9 = data7x[34:0];
 	wire [34:0] sub_wire8 = data6x[34:0];
 	wire [34:0] sub_wire7 = data5x[34:0];
@@ -65,7 +65,7 @@ module padd_8x36signed_to_1x38signed (
 	wire [34:0] sub_wire5 = data3x[34:0];
 	wire [34:0] sub_wire4 = data2x[34:0];
 	wire [34:0] sub_wire3 = data1x[34:0];
-	wire [36:0] result = sub_wire0[36:0];
+	wire [37:0] result = sub_wire0[37:0];
 	wire [34:0] sub_wire1 = data0x[34:0];
 	wire [279:0] sub_wire2 = {sub_wire9, sub_wire8, sub_wire7, sub_wire6, sub_wire5, sub_wire4, sub_wire3, sub_wire1};
 
@@ -87,7 +87,7 @@ module padd_8x36signed_to_1x38signed (
 		parallel_add_component.shift = 0,
 		parallel_add_component.size = 8,
 		parallel_add_component.width = 35,
-		parallel_add_component.widthr = 37;
+		parallel_add_component.widthr = 38;
 
 
 endmodule
@@ -105,7 +105,7 @@ endmodule
 // Retrieval info: CONSTANT: SHIFT NUMERIC "0"
 // Retrieval info: CONSTANT: SIZE NUMERIC "8"
 // Retrieval info: CONSTANT: WIDTH NUMERIC "35"
-// Retrieval info: CONSTANT: WIDTHR NUMERIC "37"
+// Retrieval info: CONSTANT: WIDTHR NUMERIC "38"
 // Retrieval info: USED_PORT: data0x 0 0 35 0 INPUT NODEFVAL "data0x[34..0]"
 // Retrieval info: USED_PORT: data1x 0 0 35 0 INPUT NODEFVAL "data1x[34..0]"
 // Retrieval info: USED_PORT: data2x 0 0 35 0 INPUT NODEFVAL "data2x[34..0]"
@@ -114,7 +114,7 @@ endmodule
 // Retrieval info: USED_PORT: data5x 0 0 35 0 INPUT NODEFVAL "data5x[34..0]"
 // Retrieval info: USED_PORT: data6x 0 0 35 0 INPUT NODEFVAL "data6x[34..0]"
 // Retrieval info: USED_PORT: data7x 0 0 35 0 INPUT NODEFVAL "data7x[34..0]"
-// Retrieval info: USED_PORT: result 0 0 37 0 OUTPUT NODEFVAL "result[36..0]"
+// Retrieval info: USED_PORT: result 0 0 38 0 OUTPUT NODEFVAL "result[37..0]"
 // Retrieval info: CONNECT: @data 0 0 35 0 data0x 0 0 35 0
 // Retrieval info: CONNECT: @data 0 0 35 35 data1x 0 0 35 0
 // Retrieval info: CONNECT: @data 0 0 35 70 data2x 0 0 35 0
@@ -123,7 +123,7 @@ endmodule
 // Retrieval info: CONNECT: @data 0 0 35 175 data5x 0 0 35 0
 // Retrieval info: CONNECT: @data 0 0 35 210 data6x 0 0 35 0
 // Retrieval info: CONNECT: @data 0 0 35 245 data7x 0 0 35 0
-// Retrieval info: CONNECT: result 0 0 37 0 @result 0 0 37 0
+// Retrieval info: CONNECT: result 0 0 38 0 @result 0 0 38 0
 // Retrieval info: GEN_FILE: TYPE_NORMAL padd_8x36signed_to_1x38signed.v TRUE
 // Retrieval info: GEN_FILE: TYPE_NORMAL padd_8x36signed_to_1x38signed.inc FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL padd_8x36signed_to_1x38signed.cmp FALSE
