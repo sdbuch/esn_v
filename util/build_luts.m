@@ -74,57 +74,70 @@ interp = (2^-13*test_in(:)).*(dfvals*2^-15) + (fvals*2^-15);
 
 
 %% 1/x LUTs (for the NORM LOOKUP---OPTIMIZED FOR SIN^3(X) TASK)
-o_wordlen = 32;
-o_fraclen = 23; % Q8.23 signed
+o_wordlen = 18;
+o_fraclen = 16; 
+o_intlen  = 1;  % Q8.23 signed
 i_wordlen = 16;
-i_fraclen = 7;  % Q8.7 signed
+i_fraclen = 8;
+i_intlen  = 8;  % Q8.7 signed
 
 f = @(x) 1./x;
 df = @(x) 1./(x).^2;  % this is actually negative, so configure the interp adder to be a subtractor
 
 % SPLIT: TWO M9K for upper 8 bits, ONE for bottom 7 bits of input
 % LUT1
-inputs = 1:2^8-1; % pre-compute point shift
-outputs= round(f(inputs)*(2^o_fraclen));
+inputs = 1:2^i_intlen-1; % pre-compute point shift
+outputs= f(inputs(:));
 d_outputs = diff(outputs);
 
 intercepts = zeros(length(inputs)-1,1);
 for i = 1:length(intercepts)
-  intercepts(i) = (outputs(i)/2^o_fraclen.*inputs(i+1)/2^i_fraclen...
-    - outputs(i+1)/2^o_fraclen*inputs(i)/2^i_fraclen)...
-    / (inputs(i+1)/2^i_fraclen-inputs(i)/2^i_fraclen);
+  intercepts(i) = (outputs(i).*inputs(i+1)...
+    - outputs(i+1)*inputs(i))...
+    / (inputs(i+1)-inputs(i));
 end
 
-intercepts = [intercepts; outputs(end)/2^o_fraclen];
-intercepts = round(intercepts*2^o_fraclen);
-outputs = [0, outputs];
-d_outputs = [0, d_outputs, 0];
+intercepts = [intercepts; outputs(end)];
+outputs = [0; outputs];
+d_outputs = [0; d_outputs; 0];
 intercepts = [0; intercepts];
-LUT1 = intercepts;
-dLUT1 = d_outputs;
+if any((intercepts > 2^o_intlen) | (d_outputs < -2^o_intlen))
+  warning('Not enough integer bits to represent the output');
+  keyboard
+end
+% Quantize
+LUT1 = round(intercepts*2^o_fraclen);
+dLUT1 = round(d_outputs*2^o_fraclen);
 dLUT1(dLUT1 < 0) =  2^o_wordlen - abs(dLUT1(dLUT1<0));
-
+keyboard
 
 
 % LUT2
+o_wordlen = 18;
+o_intlen = 9;
+o_fraclen = 8;
 inputs = 2^-i_fraclen*(1:2^i_fraclen-1);
-outputs= round(f(inputs)*(2^o_fraclen));
+outputs= f(inputs(:));
 d_outputs = diff(outputs);
 
 intercepts = zeros(length(inputs)-1,1);
 for i = 1:length(intercepts)
-  intercepts(i) = (outputs(i)/2^o_fraclen.*inputs(i+1)/2^i_fraclen...
-    - outputs(i+1)/2^o_fraclen*inputs(i)/2^i_fraclen)...
-    / (inputs(i+1)/2^i_fraclen-inputs(i)/2^i_fraclen);
+  intercepts(i) = (outputs(i).*inputs(i+1)...
+    - outputs(i+1)*inputs(i))...
+    / (inputs(i+1)-inputs(i));
 end
 
-intercepts = [intercepts; outputs(end)/2^o_fraclen];
-intercepts = round(intercepts*2^o_fraclen);
-outputs = [0, outputs];
-d_outputs = [0, d_outputs, 0];
+intercepts = [intercepts; outputs(end)];
+outputs = [0; outputs];
+d_outputs = [0; d_outputs; 0];
 intercepts = [0; intercepts];
-LUT2  = intercepts;
-dLUT2 = d_outputs;
+if any((intercepts > 2^o_intlen) | (d_outputs < -2^o_intlen))
+  warning('Not enough integer bits to represent the output');
+  keyboard
+end
+% Quantize
+LUT2  = round(intercepts*2^o_fraclen);
+dLUT2 = round(d_outputs*2^o_fraclen);
 dLUT2(dLUT2 < 0) = 2^o_wordlen - abs(dLUT2(dLUT2<0));
 
 
@@ -137,27 +150,40 @@ fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 4);
 data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
 dlmwrite('tanh_interp_LUT.txt', data_out, '');
 
-%% SECOND FILE: 1/x (Q8.7 signed in) upper 8 LUT, interp points
-data = [LUT1(:)];
+%% SECOND FILE: 1/x LUT, Q8.8 unsigned in, Q1.16 signed / Q9.8 signed out,
+%               all interp data
+if ~(isequal(LUT1,LUT2) && isequal(dLUT1,dLUT2))
+  warning('Attempting to write single file for 1/x lower/upper interp and LUT data is not equal');
+  keyboard
+end
+data = [LUT1(:); dLUT1(:)];
 
 % format and write data to a file
-fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 8);
+fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 5);
 data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
-dlmwrite('inv_integerbits_interp_funcpoints_LUT.txt', data_out, '');
+dlmwrite('inv_interp_LUT.txt', data_out, '');
 
-%% THIRD FILE: 1/x (Q8.7 signed in) upper 8 LUT, slope points
-data = [dLUT1(:)];
-
-% format and write data to a file
-fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 8);
-data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
-dlmwrite('inv_integerbits_interp_slopepoints_LUT.txt', data_out, '');
-
-%% FOURTH FILE: 1/x (Q8.7 signed in) lower 7 LUT, all interp data
-data = [LUT2(:); dLUT2(:)];
-
-% format and write data to a file
-fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 8);
-data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
-dlmwrite('inv_decimalbits_interp_LUT.txt', data_out, '');
+% %% SECOND FILE: 1/x (Q8.7 signed in) upper 8 LUT, interp points
+% data = [LUT1(:)];
+% 
+% % format and write data to a file
+% fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 8);
+% data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
+% dlmwrite('inv_integerbits_interp_funcpoints_LUT.txt', data_out, '');
+% 
+% %% THIRD FILE: 1/x (Q8.7 signed in) upper 8 LUT, slope points
+% data = [dLUT1(:)];
+% 
+% % format and write data to a file
+% fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 8);
+% data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
+% dlmwrite('inv_integerbits_interp_slopepoints_LUT.txt', data_out, '');
+% 
+% %% FOURTH FILE: 1/x (Q8.7 signed in) lower 7 LUT, all interp data
+% data = [LUT2(:); dLUT2(:)];
+% 
+% % format and write data to a file
+% fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 8);
+% data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
+% dlmwrite('inv_decimalbits_interp_LUT.txt', data_out, '');
 
