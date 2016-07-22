@@ -1,5 +1,5 @@
 module pe_8x4_16bit #(parameter WORD_LEN = 16, NEU_IN=8, NEU_OUT = 4) 
-(ce, clk, D, W, Q);
+(ce, clk, DATA, WEIGHT, Q);
 
 // Keep old parameters from pe_generic.v in case they need to be changed
 // However this should only be used for an 8 input 4 output 16 bit processor
@@ -26,7 +26,7 @@ wire [((2*WORD_LEN)*NEU_IN*NEU_OUT-1):0] PROD;
 
 
 // Second Layer Adder (parallel adders) Intermediate Outputs
-wire [(((2*WORD_LEN)+5)*NEU_OUT-1):0] SUM;
+wire [(((2*WORD_LEN)+6)*NEU_OUT-1):0] SUM;
 
 // Transfer Function Layer Outputs
 wire [(WORD_LEN*NEU_OUT-1):0] LUT_INTERP;
@@ -87,7 +87,7 @@ for (n = 0; n < NEU_OUT; n=n+1) begin: PARALLEL_ADDS
       {PROD[((NEU_IN*n+8)*(2*WORD_LEN)-1)-:2*WORD_LEN], 3'b0}
     ),
     .result(
-      SUM[((n+1)*((2*WORD_LEN)+6)-1)-:((2*WORD_LEN)+5)]
+      SUM[((n+1)*((2*WORD_LEN)+6)-1)-:((2*WORD_LEN)+6)]
     )
   );
 end

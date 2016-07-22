@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module tf_tanh_tb #(parameter wordlen=38, nin=4) ;
+module pe_8x4x16_tb;
 
 reg clk;
 
@@ -13,19 +13,25 @@ integer nout = 'd4;
 integer nweightout = (nweight >> 1);*/
 
 // Data, weight, output registers
-reg [(wordlen*nin-1):0] D;
-wire ['d16*nin-1:0] Q;
+reg ['d16*'d8-1:0] D;
+reg ['d16*'d8*'d4-1:0] W;
+wire ['d16*'d4-1:0] Q;
+
+integer val = 16'h0B2A;
+integer weight = 16'h2F04;
 
 // DUT INSTANTIATION
-tf_tanh #(wordlen, nin) DUT(
+pe_8x4_16bit #(16, 8, 4) DUT (
+  .ce(1'b1),
   .clk(clk),
-  .IBUS(D),
-  .OBUS(Q)
+  .DATA(D),
+  .WEIGHT(W),
+  .Q(Q)
 );
 
 // SIMULATION PARAMETERS
 initial begin
-  $dumpfile("tf_tanh.vcd");
+  $dumpfile("pe_8x4_16bit.vcd");
   $dumpvars;
 end
 
@@ -33,9 +39,11 @@ end
 initial begin: INITIALIZE
   // Initialize registers
   integer i;
-  for (i = 1 ; i <= nin; i=i+1) begin
-    // D[(i*wordlen-1)-:wordlen] = {(wordlen){1'b0}};
-    D[(i*wordlen-1)-:wordlen] = -38'd1;
+  for (i = 1 ; i <= 'd8; i=i+1) begin
+    D[(i*16-1)-:16] = val;
+  end
+  for (i = 1 ; i <= 'd32; i=i+1) begin
+    W[(i*16-1)-:16] = weight;
   end
   clk = 1'b0;
 end
@@ -43,13 +51,6 @@ end
 // CLOCK GEN
 always begin
   #1 clk = !clk;
-end
-
-always @(posedge clk) begin: DATA
-  integer i;
-  for (i = 1 ; i <= nin; i=i+1) begin
-    D[(i*wordlen-1)-:wordlen] = D[(i*wordlen-1)-:wordlen]-(38'd1 << 22);
-  end
 end
 
 endmodule

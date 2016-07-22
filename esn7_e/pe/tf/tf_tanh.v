@@ -24,8 +24,8 @@ generate
 for (n = 1; n <= NUM_IN; n=n+1) begin: LOGIC
   // Saturate adder outputs and setup LUT inputs
   assign LUTBUS[n*16-1-:16] = (
-    &IBUS[n*WORD_LEN-1-:4] || ~|IBUS[n*WORD_LEN-1-:4] ?
-    {IBUS[n*WORD_LEN-1], IBUS[n*WORD_LEN-1-4-:15]} :
+    &IBUS[n*WORD_LEN-1-:6] || ~|IBUS[n*WORD_LEN-1-:6] ?
+    {IBUS[n*WORD_LEN-1], IBUS[n*WORD_LEN-1-6-:15]} :
     ({1'b0, {(15){1'b1}}} ^ {(16){IBUS[n*WORD_LEN-1]}})
   );
 
