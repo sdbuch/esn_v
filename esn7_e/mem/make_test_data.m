@@ -1,3 +1,6 @@
+writedatfiles = true;
+writemiffiles = false;
+
 %% Get some weights in (-1, 1)
 w_struct.N = 7;
 pr_struct.p = 1;
@@ -27,45 +30,67 @@ y2 = (u_q.^3);
 
 %% Write data files
 % These are readmemb format
-data = u_q(:);
-data(data<0) = 2^wordlen + data(data<0);
-fmtstr = sprintf('%%0%dX', wordlen/4);
-data_out = num2str(data, fmtstr);
-dlmwrite('input_data.dat', data_out, '');
-
-data = Wq(:);
-data(data<0) = 2^wordlen + data(data<0);
-fmtstr = sprintf('%%0%dX', wordlen/4);
-data_out = num2str(data, fmtstr);
-dlmwrite('weight_data.dat', data_out, '');
-
-data = W_inq(:);
-data(data<0) = 2^wordlen + data(data<0);
-fmtstr = sprintf('%%0%dX', wordlen/4);
-data_out = num2str(data, fmtstr);
-dlmwrite('in_weight_data.dat', data_out, '');
-
-% These are .mif format
-data = u_q(:);
-data(data<0) = 2^wordlen + data(data<0);
-fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 4);
-data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
-f = fopen('input_data.mif','w+');
-if f~=-1
-  fseek(f,0,-1);
-  fprintf(f,'CONTENT BEGIN \n');
-  dlmwrite('input_data.mif', data_out, '-append', 'delimiter', '');
-  fseek(f,0,1);
-  fprintf(f,'END;');
-  fclose(f);
+if writedatfiles
+  data = u_q(:);
+  data(data<0) = 2^wordlen + data(data<0);
+  fmtstr = sprintf('%%0%dX', wordlen/4);
+  data_out = num2str(data, fmtstr);
+  dlmwrite('input_data.dat', data_out, '');
+  
+  data = Wq';
+  data = data(:);
+  data(data<0) = 2^wordlen + data(data<0);
+  fmtstr = sprintf('%%0%dX', wordlen/4);
+  data_out = num2str(data, fmtstr);
+  dlmwrite('weight_data.dat', data_out, '');
+  
+  data = W_inq(:);
+  data(data<0) = 2^wordlen + data(data<0);
+  fmtstr = sprintf('%%0%dX', wordlen/4);
+  data_out = num2str(data, fmtstr);
+  dlmwrite('in_weight_data.dat', data_out, '');
 end
 
-for i = 1:size(W,1)
-  data = Wq(i,:)';
+% These are .mif format
+if writemiffiles
+  data = u_q(:);
   data(data<0) = 2^wordlen + data(data<0);
   fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 4);
   data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
-  fn = strcat('weight_data', num2str(i), '.mif');
+  f = fopen('input_data.mif','w+');
+  if f~=-1
+    fseek(f,0,-1);
+    fprintf(f,'CONTENT BEGIN \n');
+    dlmwrite('input_data.mif', data_out, '-append', 'delimiter', '');
+    fseek(f,0,1);
+    fprintf(f,'END;');
+    fclose(f);
+  end
+  
+  for i = 1:size(W,1)
+    data = Wq(i,:)';
+    data(data<0) = 2^wordlen + data(data<0);
+    fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 4);
+    data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
+    fn = strcat('weight_data', num2str(i), '.mif');
+    f = fopen(fn,'w+');
+    if f~=-1
+      fseek(f,0,-1);
+      fprintf(f,'CONTENT BEGIN \n');
+      dlmwrite(fn, data_out, '-append', 'delimiter', '');
+      fseek(f,0,1);
+      fprintf(f,'END;');
+      fclose(f);
+    end
+    
+    
+  end
+  
+  data = W_inq(:);
+  data(data<0) = 2^wordlen + data(data<0);
+  fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 4);
+  data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
+  fn = strcat('in_weight_data.mif');
   f = fopen(fn,'w+');
   if f~=-1
     fseek(f,0,-1);
@@ -75,21 +100,4 @@ for i = 1:size(W,1)
     fprintf(f,'END;');
     fclose(f);
   end
-  
-  
-end
-
-data = W_inq(:);
-data(data<0) = 2^wordlen + data(data<0);
-fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 4);
-data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
-fn = strcat('in_weight_data.mif');
-f = fopen(fn,'w+');
-if f~=-1
-  fseek(f,0,-1);
-  fprintf(f,'CONTENT BEGIN \n');
-  dlmwrite(fn, data_out, '-append', 'delimiter', '');
-  fseek(f,0,1);
-  fprintf(f,'END;');
-  fclose(f);
 end
