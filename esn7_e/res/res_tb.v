@@ -15,7 +15,8 @@ res_top DUT(
 // SIMULATION PARAMETERS
 initial begin
   $dumpfile("res_tb.vcd");
-  $dumpvars;
+  $dumpvars(0,res_tb.xstate, res_tb.DUT.PE0.DATA, res_tb.DUT.PE1.DATA,
+  res_tb.DUT.PE0.WEIGHT, res_tb.DUT.PE1.WEIGHT);
 end
 
 // Var inits
