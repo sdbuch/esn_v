@@ -17,8 +17,8 @@ reg ['d16*'d8-1:0] D;
 reg ['d16*'d8*'d4-1:0] W;
 wire ['d16*'d4-1:0] Q;
 
-integer val = 16'h0B2A;
-integer weight = 16'h2F04;
+integer val = 16'h7B2A;
+integer weight = 16'h8F04;
 
 // DUT INSTANTIATION
 pe_8x4_16bit #(16, 8, 4) DUT (
