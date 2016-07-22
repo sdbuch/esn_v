@@ -6,7 +6,7 @@ from subprocess import check_call
 from itertools import chain
 import ipdb
 
-vcd_fn = 'tf_tanh'
+vcd_fn = 'tf_tanh_neg'
 sig_list = ['tf_tanh_tb.D[151:0]', 'tf_tanh_tb.Q[63:0]']
 word_len_list = [38, 16]
 

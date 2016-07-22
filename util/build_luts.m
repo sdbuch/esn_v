@@ -26,7 +26,6 @@ for k = 1:length(i_wordlen)
   end
   intercepts = [intercepts; outputs(end)/2^15];
   intercepts = round(intercepts*2^o_fraclen);
-  
   % looks like the intercepts can be encoded as Q0.15 signed
   
   
@@ -147,7 +146,15 @@ data = [LUT0(:); dLUT0(:)];
 % format and write data to a file
 fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 4);
 data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
-dlmwrite('tanh_interp_LUT.txt', data_out, '');
+f = fopen('tanh_interp_lut.mif','w+');
+if f~=-1
+  fseek(f,0,-1);
+  fprintf(f,'CONTENT BEGIN \r\n');
+  dlmwrite('tanh_interp_lut.mif', data_out, '-append', 'delimiter', '');
+  fseek(f,0,1);
+  fprintf(f,'END;');
+  fclose(f);
+end
 
 %% SECOND FILE: 1/x LUT, Q8.8 unsigned in, Q1.16 signed / Q9.8 signed out,
 %               all interp data
@@ -160,7 +167,15 @@ data = [LUT1(:); dLUT1(:)];
 % format and write data to a file
 fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 5);
 data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
-dlmwrite('inv_interp_LUT.txt', data_out, '');
+f = fopen('inv_interp_lut.mif','w+');
+if f~=-1
+  fseek(f,0,-1);
+  fprintf(f,'CONTENT BEGIN \r\n');
+  dlmwrite('inv_interp_lut.mif', data_out, '-append', 'delimiter', '');
+  fseek(f,0,1);
+  fprintf(f,'END;');
+  fclose(f);
+end
 
 % %% SECOND FILE: 1/x (Q8.7 signed in) upper 8 LUT, interp points
 % data = [LUT1(:)];
