@@ -149,7 +149,11 @@ data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
 f = fopen('tanh_interp_lut.mif','w+');
 if f~=-1
   fseek(f,0,-1);
-  fprintf(f,'CONTENT BEGIN \r\n');
+  fprintf(f,'WIDTH=%D;\n', 16);
+  fprintf(f,'DEPTH=%D;\n', length(data));
+  fprintf(f,'ADDRESS_RADIX=UNS;\n');
+  fprintf(f,'DATA_RADIX=HEX;\n');
+  fprintf(f,'CONTENT BEGIN\n');
   dlmwrite('tanh_interp_lut.mif', data_out, '-append', 'delimiter', '');
   fseek(f,0,1);
   fprintf(f,'END;');
@@ -170,7 +174,11 @@ data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
 f = fopen('inv_interp_lut.mif','w+');
 if f~=-1
   fseek(f,0,-1);
-  fprintf(f,'CONTENT BEGIN \r\n');
+  fprintf(f,'WIDTH=%D;\n', 16);
+  fprintf(f,'DEPTH=%D;\n', length(data));
+  fprintf(f,'ADDRESS_RADIX=UNS;\n');
+  fprintf(f,'DATA_RADIX=HEX;\n');
+  fprintf(f,'CONTENT BEGIN\n');
   dlmwrite('inv_interp_lut.mif', data_out, '-append', 'delimiter', '');
   fseek(f,0,1);
   fprintf(f,'END;');
