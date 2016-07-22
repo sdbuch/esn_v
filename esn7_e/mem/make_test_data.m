@@ -1,9 +1,9 @@
 %% Get some weights in (-1, 1)
-% We are going to treat the 8th row of W as if it is W_in
-w_struct.N = 8;
+w_struct.N = 7;
 pr_struct.p = 1;
-W = ESN_init(0.7,w_struct,pr_struct);
+[W,~,W_in,~] = ESN_init(0.7,w_struct,pr_struct,0,0,0,0);
 Wq = round(W*2^15);
+W_inq = round(W_in*2^15);
 
 %% Get a sinusoidal input
 T = 1e-3;
@@ -39,6 +39,12 @@ fmtstr = sprintf('%%0%dX', wordlen/4);
 data_out = num2str(data, fmtstr);
 dlmwrite('weight_data.dat', data_out, '');
 
+data = W_inq(:);
+data(data<0) = 2^wordlen + data(data<0);
+fmtstr = sprintf('%%0%dX', wordlen/4);
+data_out = num2str(data, fmtstr);
+dlmwrite('in_weight_data.dat', data_out, '');
+
 % These are .mif format
 data = u_q(:);
 data(data<0) = 2^wordlen + data(data<0);
@@ -71,4 +77,19 @@ for i = 1:size(W,1)
   end
   
   
+end
+
+data = W_inq(:);
+data(data<0) = 2^wordlen + data(data<0);
+fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 4);
+data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
+fn = strcat('in_weight_data.mif');
+f = fopen(fn,'w+');
+if f~=-1
+  fseek(f,0,-1);
+  fprintf(f,'CONTENT BEGIN \n');
+  dlmwrite(fn, data_out, '-append', 'delimiter', '');
+  fseek(f,0,1);
+  fprintf(f,'END;');
+  fclose(f);
 end
