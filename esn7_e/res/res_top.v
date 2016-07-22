@@ -5,9 +5,16 @@ input rst_N;
 
 output [8*16-1:0] xstate;
 
+wire [1:0] slowcount;
+slow_Ctr DIVCNT(
+  .clock(clk),
+  .sclr(!rst_N),
+  .q(slowcount)
+);
 wire [5:0] addr;
 addr_ctr ACTR (
   .clock(clk),
+  .clk_en(&slowcount),
   .sclr(!rst_N),
   .q(addr)
 );
@@ -81,7 +88,7 @@ assign WBUS_PE0[8*16*3-1 -: 8*16] = {WINBUS[16*3-1 -: 16], W2BUS};
 assign WBUS_PE0[8*16*2-1 -: 8*16] = {WINBUS[16*2-1 -: 16], W1BUS};
 assign WBUS_PE0[8*16*1-1 -: 8*16] = {WINBUS[16*1-1 -: 16], W0BUS};
 wire [16*8*4-1:0] WBUS_PE1;
-assign WBUS_PE1[8*16*4-1 -: 8*16] = 112'b0;
+assign WBUS_PE1[8*16*4-1 -: 8*16] = 128'b0;
 assign WBUS_PE1[8*16*3-1 -: 8*16] = {WINBUS[16*7-1 -: 16], W6BUS};
 assign WBUS_PE1[8*16*2-1 -: 8*16] = {WINBUS[16*6-1 -: 16], W5BUS};
 assign WBUS_PE1[8*16*1-1 -: 8*16] = {WINBUS[16*5-1 -: 16], W4BUS};
