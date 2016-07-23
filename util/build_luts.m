@@ -1,7 +1,7 @@
 %% tanh LUTs
 o_wordlen = 16;
 o_fraclen = 15;
-i_wordlen = [4]; % Controls LUT depth = 2^i_wordlen. 1x M9k storing 32 bit words can hold up to 256 words (2^8)
+i_wordlen = [7]; % Controls LUT depth = 2^i_wordlen. 1x M9k storing 32 bit words can hold up to 256 words (2^8)
 i_intlen = 2;
 
 f = @(x) tanh(x);
@@ -22,9 +22,9 @@ for k = 1:length(i_wordlen)
   d_outputs(d_outputs >= 2^(o_fraclen)-1) = 2^(o_fraclen)-1;
   intercepts = zeros(length(inputs)-1,1);
   for i = 1:length(intercepts)
-    intercepts(i) = (outputs(i)/2^15.*inputs(i+1)/2^2 - outputs(i+1)/2^15*inputs(i)/2^2) / (inputs(i+1)/2^2-inputs(i)/2^2);
+    intercepts(i) = (outputs(i)/2^o_fraclen.*inputs(i+1)/2^i_fraclen - outputs(i+1)/2^o_fraclen*inputs(i)/2^i_fraclen) / (inputs(i+1)/2^i_fraclen-inputs(i)/2^i_fraclen);
   end
-  intercepts = [intercepts; outputs(end)/2^15];
+  intercepts = [intercepts; outputs(end)/2^o_fraclen];
   intercepts = round(intercepts*2^o_fraclen);
   % looks like the intercepts can be encoded as Q0.15 signed
   
@@ -53,7 +53,7 @@ input_neg = 2^15:-1:1;
 input_neg = 2^16-input_neg;
 input = [input_neg, 0:2^15-1];
 tmp = dec2bin(input,16);
-addr = tmp(:,1:5);
+addr = tmp(:,1:i_wordlen+1);
 indices = bin2dec(addr)+1;
 f_lookups = intercepts(indices);
 df_lookups = d_outputs(indices);
@@ -69,7 +69,8 @@ test_in(test_in>=2^15) = -(2^16-test_in(test_in>=2^15));
 interp = (2^-13*test_in(:)).*(dfvals*2^-15) + (fvals*2^-15);
 % fvals = double(f_lookups)/;
 % dfvals = double(df_lookups);
-
+% report 2 norm difference
+disp(norm(interp - tanh(2^-13*test_in(:)),2));
 
 
 %% 1/x LUTs (for the NORM LOOKUP---OPTIMIZED FOR SIN^3(X) TASK)
@@ -149,8 +150,8 @@ data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
 f = fopen('tanh_interp_lut.mif','w+');
 if f~=-1
   fseek(f,0,-1);
-  fprintf(f,'WIDTH=%D;\n', 16);
-  fprintf(f,'DEPTH=%D;\n', length(data));
+  fprintf(f,'WIDTH=%d;\n', 16);
+  fprintf(f,'DEPTH=%d;\n', length(data));
   fprintf(f,'ADDRESS_RADIX=UNS;\n');
   fprintf(f,'DATA_RADIX=HEX;\n');
   fprintf(f,'CONTENT BEGIN\n');
@@ -174,8 +175,8 @@ data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
 f = fopen('inv_interp_lut.mif','w+');
 if f~=-1
   fseek(f,0,-1);
-  fprintf(f,'WIDTH=%D;\n', 16);
-  fprintf(f,'DEPTH=%D;\n', length(data));
+  fprintf(f,'WIDTH=%d;\n', 16);
+  fprintf(f,'DEPTH=%d;\n', length(data));
   fprintf(f,'ADDRESS_RADIX=UNS;\n');
   fprintf(f,'DATA_RADIX=HEX;\n');
   fprintf(f,'CONTENT BEGIN\n');

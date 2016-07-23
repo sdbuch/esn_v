@@ -60,8 +60,8 @@ if writemiffiles
   f = fopen('input_data.mif','w+');
   if f~=-1
     fseek(f,0,-1);
-    fprintf(f,'WIDTH=%D;\n', 16);
-    fprintf(f,'DEPTH=%D;\n', length(data));
+    fprintf(f,'WIDTH=%d;\n', 16);
+    fprintf(f,'DEPTH=%d;\n', length(data));
     fprintf(f,'ADDRESS_RADIX=UNS;\n');
     fprintf(f,'DATA_RADIX=HEX;\n');
     fprintf(f,'CONTENT BEGIN \n');
@@ -80,8 +80,8 @@ if writemiffiles
     f = fopen(fn,'w+');
     if f~=-1
       fseek(f,0,-1);
-      fprintf(f,'WIDTH=%D;\n', 16);
-      fprintf(f,'DEPTH=%D;\n', length(data));
+      fprintf(f,'WIDTH=%d;\n', 16);
+      fprintf(f,'DEPTH=%d;\n', length(data));
       fprintf(f,'ADDRESS_RADIX=UNS;\n');
       fprintf(f,'DATA_RADIX=HEX;\n');
       fprintf(f,'CONTENT BEGIN \n');
@@ -102,8 +102,8 @@ if writemiffiles
   f = fopen(fn,'w+');
   if f~=-1
     fseek(f,0,-1);
-    fprintf(f,'WIDTH=%D;\n', 16);
-    fprintf(f,'DEPTH=%D;\n', length(data));
+    fprintf(f,'WIDTH=%d;\n', 16);
+    fprintf(f,'DEPTH=%d;\n', length(data));
     fprintf(f,'ADDRESS_RADIX=UNS;\n');
     fprintf(f,'DATA_RADIX=HEX;\n');
     fprintf(f,'CONTENT BEGIN \n');
