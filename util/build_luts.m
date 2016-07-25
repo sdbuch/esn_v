@@ -106,8 +106,9 @@ if any((intercepts > 2^o_intlen) | (d_outputs < -2^o_intlen))
   keyboard
 end
 % Quantize
+
 LUT1 = round(intercepts*2^o_fraclen);
-dLUT1 = round(d_outputs*2^o_fraclen);
+dLUT1 = round(-d_outputs*2^o_fraclen);
 dLUT1(dLUT1 < 0) =  2^o_wordlen - abs(dLUT1(dLUT1<0));
 
 
@@ -136,7 +137,7 @@ if any((intercepts > 2^o_intlen) | (d_outputs < -2^o_intlen))
 end
 % Quantize
 LUT2  = round(intercepts*2^o_fraclen);
-dLUT2 = round(d_outputs*2^o_fraclen);
+dLUT2 = round(-d_outputs*2^o_fraclen);
 dLUT2(dLUT2 < 0) = 2^o_wordlen - abs(dLUT2(dLUT2<0));
 
 
@@ -175,7 +176,7 @@ data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
 f = fopen('inv_interp_lut.mif','w+');
 if f~=-1
   fseek(f,0,-1);
-  fprintf(f,'WIDTH=%d;\n', 16);
+  fprintf(f,'WIDTH=%d;\n', 18);
   fprintf(f,'DEPTH=%d;\n', length(data));
   fprintf(f,'ADDRESS_RADIX=UNS;\n');
   fprintf(f,'DATA_RADIX=HEX;\n');
