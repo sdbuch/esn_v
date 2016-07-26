@@ -1,9 +1,10 @@
-module res_top(clk, rst_N, xstate);
+module res_top(clk, rst_N, XSTATE, ADDR_OUT);
 
 input clk;
 input rst_N;
 
-output [8*16-1:0] xstate;
+output [8*16 -1 : 0] XSTATE;
+output [5:0] ADDR_OUT;
 
 wire [1:0] slowcount;
 slow_Ctr DIVCNT(
@@ -29,8 +30,6 @@ input_ROM DMEM (
 );
 
 // Weight input data
-// Design flow for this: Look at the weight_data.dat file in ../mem directory
-// And copy out 7 consec hex values at a time to the LPM_CONST megafunc wizard
 /*
 wire [7*16-1:0] W0BUS;
 W0_reg W0REG (
@@ -94,6 +93,7 @@ assign WBUS_PE1[8*16*2-1 -: 8*16] = {WINBUS[16*6-1 -: 16], W5BUS};
 assign WBUS_PE1[8*16*1-1 -: 8*16] = {WINBUS[16*5-1 -: 16], W4BUS};
 
 // Feedback output data bus
+wire [8*16-1:0] state;
 wire [16*7-1:0] STATEBUS_FB;
 wire [16*7-1:0] STATEBUS_DELAY;
 assign STATEBUS_FB = STATEBUS_DELAY;
@@ -103,7 +103,7 @@ pe_8x4_16bit #(16,8,4) PE0 (
   .clk(clk),
   .DATA({U, STATEBUS_FB}),
   .WEIGHT(WBUS_PE0),
-  .Q(xstate[16*4-1 -: 16*4])
+  .Q(state[16*4-1 -: 16*4])
 );
 
 pe_8x4_16bit #(16,8,4) PE1 (
@@ -111,16 +111,16 @@ pe_8x4_16bit #(16,8,4) PE1 (
   .clk(clk),
   .DATA({U, STATEBUS_FB}),
   .WEIGHT(WBUS_PE1),
-  .Q(xstate[16*8-1 -: 16*4])
+  .Q(state[16*8-1 -: 16*4])
 );
 
 // Feedback delay elements
 genvar n,k;
 generate
-for (n = 1; n <= 7; n=n+1) begin: STATE_DELAYS
-  for(k = 1; k <= 16; k=k+1) begin: BUS_DELAYS
-    dff OREG (
-      .d(xstate[n*16-k]),
+for (n = 1; n <= 7; n=n+1) begin: STATE_FB_DELAYS
+  for(k = 1; k <= 16; k=k+1) begin: BUS_FB_DELAYS
+    dff FBREG (
+      .d(state[n*16-k]),
       .clk(clk),
       .clrn(rst_N),
       .prn(1'b1),
@@ -128,6 +128,120 @@ for (n = 1; n <= 7; n=n+1) begin: STATE_DELAYS
     );
   end
 end
+endgenerate
+
+// Network output generation
+// Input feedforward to XSTATE
+// Pass through four flipflops so the network output changes in phase with the
+// state updates
+generate
+for(k = 1; k <= 16; k=k+1) begin: INPUT_FF_DELAYS
+  wire U_FF_TMP1;
+  wire U_FF_TMP2;
+  wire U_FF_TMP3;
+  dff U_FFREG1 (
+    .d(U[16-k]),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(U_FF_TMP1)
+  );
+
+  dff U_FFREG2 (
+    .d(U_FF_TMP1),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(U_FF_TMP2)
+  );
+
+  dff U_FFREG3 (
+    .d(U_FF_TMP2),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(U_FF_TMP3)
+  );
+
+  dff U_FFREG4 (
+    .d(U_FF_TMP3),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(XSTATE[8*16-k])
+  );
+end
+
+// Forward the address outputs with 6 cycles of delay (2 for U addr latency, 4
+// for the processing pipeline latency)
+for(k = 1; k <= 6; k=k+1) begin: ADDR_DELAYS
+  wire ADDR_FF_TMP1;
+  wire ADDR_FF_TMP2;
+  wire ADDR_FF_TMP3;
+  wire ADDR_FF_TMP4;
+  wire ADDR_FF_TMP5;
+
+  dff ADDR_FFREG1 (
+    .d(addr[6-k]),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(ADDR_FF_TMP1)
+  );
+
+  dff ADDR_FFREG2 (
+    .d(ADDR_FF_TMP1),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(ADDR_FF_TMP2)
+  );
+
+  dff ADDR_FFREG3 (
+    .d(ADDR_FF_TMP2),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(ADDR_FF_TMP3)
+  );
+
+  dff ADDR_FFREG4 (
+    .d(ADDR_FF_TMP3),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(ADDR_FF_TMP4)
+  );
+
+  dff ADDR_FFREG5 (
+    .d(ADDR_FF_TMP4),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(ADDR_FF_TMP5)
+  );
+  dff ADDR_FFREG6 (
+    .d(ADDR_FF_TMP5),
+    .clk(clk),
+    .clrn(rst_N),
+    .prn(1'b1),
+    .q(ADDR_OUT[6-k])
+  );
+end
+
+// Forward state outputs after a delay of 1 cycle
+for (n = 1; n <= 7; n=n+1) begin: STATE_OUT_DELAYS
+  for(k = 1; k <= 16; k=k+1) begin: INPUT_FF_DELAYS
+    dff STATE_OREG (
+      .d(state[n*16-k]),
+      .clk(clk),
+      .clrn(rst_N),
+      .prn(1'b1),
+      .q(XSTATE[n*16-k])
+    );
+  end
+end
+
 endgenerate
 
 

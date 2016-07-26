@@ -27,7 +27,7 @@ wire [(WWORD_LEN+SWORD_LEN+3+3)+(SWORD_LEN*2+6+3)-1:0] SUM;
 wire [(2*WWORD_LEN-1):0] LUT_INTERP;
 
 // Outputs
-output reg [(2*WWORD_LEN-1):0] Q;
+output [(2*WWORD_LEN-1):0] Q;
 
 // Instantiation based submodules
 // Includes MULTIPLIERS, 2to1 ADDERS, PARALLEL ADDERS
@@ -144,8 +144,11 @@ tf_inv #((WWORD_LEN+SWORD_LEN+3+3)+(SWORD_LEN*2+6+3), 2) TF0(
   .OBUS(LUT_INTERP)
 );
 
+// Output stage -- no latency -- ignore CE
+assign Q = LUT_INTERP;
 
 // OUTPUT STAGE
+/*
 always @(posedge clk) begin: OUTPUT
   //integer i;
   case (ce)
@@ -158,9 +161,9 @@ always @(posedge clk) begin: OUTPUT
     1'b1: begin
       Q <= LUT_INTERP;
       // Next lines are for use in weight update enabled PEs
-      /*for (i = NEU_OUT; i < (NEU_IN*NEU_OUT>>1); i=i+1) begin
+      for (i = NEU_OUT; i < (NEU_IN*NEU_OUT>>1); i=i+1) begin
         Q[((i+1)*WORD_LEN-1)-:WORD_LEN] <= {(WORD_LEN){1'b0}};
-      end*/
+      end
     end
 
     // Default mode... lock up and forward last output  
@@ -170,6 +173,7 @@ always @(posedge clk) begin: OUTPUT
   endcase
 
 end				 
+*/
 
 
 endmodule
