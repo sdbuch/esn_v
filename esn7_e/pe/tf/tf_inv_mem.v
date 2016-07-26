@@ -4,7 +4,7 @@
 // MODULE: altsyncram 
 
 // ============================================================
-// File Name: tf_tanh_mem.v
+// File Name: tf_inv_mem.v
 // Megafunction Name(s):
 // 			altsyncram
 //
@@ -36,7 +36,7 @@
 // synopsys translate_off
 `timescale 1 ps / 1 ps
 // synopsys translate_on
-module tf_tanh_mem (
+module tf_inv_mem (
 	address_a,
 	address_b,
 	clock,
@@ -46,8 +46,8 @@ module tf_tanh_mem (
 	input	[8:0]  address_a;
 	input	[8:0]  address_b;
 	input	  clock;
-	output	[15:0]  q_a;
-	output	[15:0]  q_b;
+	output	[17:0]  q_a;
+	output	[17:0]  q_b;
 `ifndef ALTERA_RESERVED_QIS
 // synopsys translate_off
 `endif
@@ -56,12 +56,12 @@ module tf_tanh_mem (
 // synopsys translate_on
 `endif
 
-	wire [15:0] sub_wire0;
-	wire [15:0] sub_wire1;
+	wire [17:0] sub_wire0;
+	wire [17:0] sub_wire1;
 	wire  sub_wire2 = 1'h0;
-	wire [15:0] sub_wire3 = 16'h0;
-	wire [15:0] q_b = sub_wire0[15:0];
-	wire [15:0] q_a = sub_wire1[15:0];
+	wire [17:0] sub_wire3 = 18'h0;
+	wire [17:0] q_b = sub_wire0[17:0];
+	wire [17:0] q_a = sub_wire1[17:0];
 
 	altsyncram	altsyncram_component (
 				.clock0 (clock),
@@ -98,7 +98,7 @@ module tf_tanh_mem (
 		altsyncram_component.clock_enable_output_a = "BYPASS",
 		altsyncram_component.clock_enable_output_b = "BYPASS",
 		altsyncram_component.indata_reg_b = "CLOCK0",
-		altsyncram_component.init_file = "/home/public/fpga/esn_v/esn7_e/pe/tf/tanh_interp_LUT.mif",
+		altsyncram_component.init_file = "/home/public/fpga/esn_v/esn7_e/pe/tf/inv_interp_LUT.mif",
 		altsyncram_component.intended_device_family = "Cyclone IV E",
 		altsyncram_component.lpm_type = "altsyncram",
 		altsyncram_component.numwords_a = 512,
@@ -112,8 +112,8 @@ module tf_tanh_mem (
 		altsyncram_component.ram_block_type = "M9K",
 		altsyncram_component.widthad_a = 9,
 		altsyncram_component.widthad_b = 9,
-		altsyncram_component.width_a = 16,
-		altsyncram_component.width_b = 16,
+		altsyncram_component.width_a = 18,
+		altsyncram_component.width_b = 18,
 		altsyncram_component.width_byteena_a = 1,
 		altsyncram_component.width_byteena_b = 1,
 		altsyncram_component.wrcontrol_wraddress_reg_b = "CLOCK0";
@@ -154,9 +154,9 @@ endmodule
 // Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "0"
 // Retrieval info: PRIVATE: JTAG_ID STRING "NONE"
 // Retrieval info: PRIVATE: MAXIMUM_DEPTH NUMERIC "0"
-// Retrieval info: PRIVATE: MEMSIZE NUMERIC "8192"
+// Retrieval info: PRIVATE: MEMSIZE NUMERIC "9216"
 // Retrieval info: PRIVATE: MEM_IN_BITS NUMERIC "0"
-// Retrieval info: PRIVATE: MIFfilename STRING "../pe/tf/tanh_interp_LUT.mif"
+// Retrieval info: PRIVATE: MIFfilename STRING "../pe/tf/inv_interp_LUT.mif"
 // Retrieval info: PRIVATE: OPERATION_MODE NUMERIC "3"
 // Retrieval info: PRIVATE: OUTDATA_ACLR_B NUMERIC "0"
 // Retrieval info: PRIVATE: OUTDATA_REG_B NUMERIC "1"
@@ -172,10 +172,10 @@ endmodule
 // Retrieval info: PRIVATE: USE_DIFF_CLKEN NUMERIC "0"
 // Retrieval info: PRIVATE: UseDPRAM NUMERIC "1"
 // Retrieval info: PRIVATE: VarWidth NUMERIC "0"
-// Retrieval info: PRIVATE: WIDTH_READ_A NUMERIC "16"
-// Retrieval info: PRIVATE: WIDTH_READ_B NUMERIC "16"
-// Retrieval info: PRIVATE: WIDTH_WRITE_A NUMERIC "16"
-// Retrieval info: PRIVATE: WIDTH_WRITE_B NUMERIC "16"
+// Retrieval info: PRIVATE: WIDTH_READ_A NUMERIC "18"
+// Retrieval info: PRIVATE: WIDTH_READ_B NUMERIC "18"
+// Retrieval info: PRIVATE: WIDTH_WRITE_A NUMERIC "18"
+// Retrieval info: PRIVATE: WIDTH_WRITE_B NUMERIC "18"
 // Retrieval info: PRIVATE: WRADDR_ACLR_B NUMERIC "0"
 // Retrieval info: PRIVATE: WRADDR_REG_B NUMERIC "1"
 // Retrieval info: PRIVATE: WRCTRL_ACLR_B NUMERIC "0"
@@ -188,7 +188,7 @@ endmodule
 // Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_A STRING "BYPASS"
 // Retrieval info: CONSTANT: CLOCK_ENABLE_OUTPUT_B STRING "BYPASS"
 // Retrieval info: CONSTANT: INDATA_REG_B STRING "CLOCK0"
-// Retrieval info: CONSTANT: INIT_FILE STRING "../pe/tf/tanh_interp_LUT.mif"
+// Retrieval info: CONSTANT: INIT_FILE STRING "../pe/tf/inv_interp_LUT.mif"
 // Retrieval info: CONSTANT: INTENDED_DEVICE_FAMILY STRING "Cyclone IV E"
 // Retrieval info: CONSTANT: LPM_TYPE STRING "altsyncram"
 // Retrieval info: CONSTANT: NUMWORDS_A NUMERIC "512"
@@ -202,30 +202,30 @@ endmodule
 // Retrieval info: CONSTANT: RAM_BLOCK_TYPE STRING "M9K"
 // Retrieval info: CONSTANT: WIDTHAD_A NUMERIC "9"
 // Retrieval info: CONSTANT: WIDTHAD_B NUMERIC "9"
-// Retrieval info: CONSTANT: WIDTH_A NUMERIC "16"
-// Retrieval info: CONSTANT: WIDTH_B NUMERIC "16"
+// Retrieval info: CONSTANT: WIDTH_A NUMERIC "18"
+// Retrieval info: CONSTANT: WIDTH_B NUMERIC "18"
 // Retrieval info: CONSTANT: WIDTH_BYTEENA_A NUMERIC "1"
 // Retrieval info: CONSTANT: WIDTH_BYTEENA_B NUMERIC "1"
 // Retrieval info: CONSTANT: WRCONTROL_WRADDRESS_REG_B STRING "CLOCK0"
 // Retrieval info: USED_PORT: address_a 0 0 9 0 INPUT NODEFVAL "address_a[8..0]"
 // Retrieval info: USED_PORT: address_b 0 0 9 0 INPUT NODEFVAL "address_b[8..0]"
 // Retrieval info: USED_PORT: clock 0 0 0 0 INPUT VCC "clock"
-// Retrieval info: USED_PORT: q_a 0 0 16 0 OUTPUT NODEFVAL "q_a[15..0]"
-// Retrieval info: USED_PORT: q_b 0 0 16 0 OUTPUT NODEFVAL "q_b[15..0]"
+// Retrieval info: USED_PORT: q_a 0 0 18 0 OUTPUT NODEFVAL "q_a[17..0]"
+// Retrieval info: USED_PORT: q_b 0 0 18 0 OUTPUT NODEFVAL "q_b[17..0]"
 // Retrieval info: CONNECT: @address_a 0 0 9 0 address_a 0 0 9 0
 // Retrieval info: CONNECT: @address_b 0 0 9 0 address_b 0 0 9 0
 // Retrieval info: CONNECT: @clock0 0 0 0 0 clock 0 0 0 0
-// Retrieval info: CONNECT: @data_a 0 0 16 0 GND 0 0 16 0
-// Retrieval info: CONNECT: @data_b 0 0 16 0 GND 0 0 16 0
+// Retrieval info: CONNECT: @data_a 0 0 18 0 GND 0 0 18 0
+// Retrieval info: CONNECT: @data_b 0 0 18 0 GND 0 0 18 0
 // Retrieval info: CONNECT: @wren_a 0 0 0 0 GND 0 0 0 0
 // Retrieval info: CONNECT: @wren_b 0 0 0 0 GND 0 0 0 0
-// Retrieval info: CONNECT: q_a 0 0 16 0 @q_a 0 0 16 0
-// Retrieval info: CONNECT: q_b 0 0 16 0 @q_b 0 0 16 0
-// Retrieval info: GEN_FILE: TYPE_NORMAL tf_tanh_mem.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL tf_tanh_mem.inc FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL tf_tanh_mem.cmp FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL tf_tanh_mem.bsf FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL tf_tanh_mem_inst.v FALSE
-// Retrieval info: GEN_FILE: TYPE_NORMAL tf_tanh_mem_bb.v TRUE
-// Retrieval info: GEN_FILE: TYPE_NORMAL tf_tanh_mem_syn.v TRUE
+// Retrieval info: CONNECT: q_a 0 0 18 0 @q_a 0 0 18 0
+// Retrieval info: CONNECT: q_b 0 0 18 0 @q_b 0 0 18 0
+// Retrieval info: GEN_FILE: TYPE_NORMAL tf_inv_mem.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL tf_inv_mem.inc FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL tf_inv_mem.cmp FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL tf_inv_mem.bsf FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL tf_inv_mem_inst.v FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL tf_inv_mem_bb.v TRUE
+// Retrieval info: GEN_FILE: TYPE_NORMAL tf_inv_mem_syn.v TRUE
 // Retrieval info: LIB_FILE: altera_mf

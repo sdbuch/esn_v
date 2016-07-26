@@ -31,8 +31,8 @@ for (n = 1; n <= NUM_IN; n=n+1) begin: LOGIC
 
   // Create memory
   tf_tanh_mem LUT (
-    .address_a({1'b0,LUTBUS[n*16-1-:5]}), // interp point
-    .address_b({1'b1,LUTBUS[n*16-1-:5]}), // slope
+    .address_a({1'b0,LUTBUS[n*16-1-:8]}), // interp point
+    .address_b({1'b1,LUTBUS[n*16-1-:8]}), // slope
     .q_a(LUT_PT[n*16-1-:16]),
     .q_b(LUT_CF[n*16-1-:16]),
     .clock(clk)
