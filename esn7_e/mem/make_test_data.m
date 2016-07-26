@@ -90,7 +90,7 @@ if writemiffiles
   data(data<0) = 2^32 + data(data<0);
   fmtstr = sprintf('%%%dd\t:\t%%0%dX;', ceil(log10(length(data))), 8);
   data_out = num2str([(0:(length(data)-1)).' data], fmtstr);
-  f = fopen('input_data.mif','w+');
+  f = fopen('output_data.mif','w+');
   if f~=-1
     fseek(f,0,-1);
     fprintf(f,'WIDTH=%d;\n', 32);
@@ -98,7 +98,7 @@ if writemiffiles
     fprintf(f,'ADDRESS_RADIX=UNS;\n');
     fprintf(f,'DATA_RADIX=HEX;\n');
     fprintf(f,'CONTENT BEGIN \n');
-    dlmwrite('input_data.mif', data_out, '-append', 'delimiter', '');
+    dlmwrite('output_data.mif', data_out, '-append', 'delimiter', '');
     fseek(f,0,1);
     fprintf(f,'END;');
     fclose(f);
