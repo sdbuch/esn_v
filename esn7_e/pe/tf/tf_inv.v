@@ -109,12 +109,8 @@ assign LUT_PT = (
     .result(SUM_TMP)
   );
 
-  // Saturate the output to Q11.20 (32bit)
-  assign INTERP[n*32-1-:32] = (
-    ~|SUM_TMP[36-1-:2] ?
-    {1'b0, SUM_TMP[36-1-2-:31]} :
-    {1'b0, {(31){1'b1}}}
-  );
+  // Truncate the output to Q11.20 (32bit)
+  assign INTERP[n*32-1-:32] = SUM_TMP[36-1-:32];
 
 end
 
