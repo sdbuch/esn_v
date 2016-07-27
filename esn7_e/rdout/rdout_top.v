@@ -22,8 +22,6 @@ output reg [32*8 - 1 : 0] W_out; // learned output weights at current time
 //   first block proc delay
 
 // Input processor
-wire [16*8-1 : 0] DBUS;
-wire [32*8 + 16*8 -1 : 0] WBUS;
 wire [32*8 - 1 : 0] WOUT_FBBUS; // Connect the other end at end of module
 wire [32*2 -1 : 0] OBUS_PE8X2;
 pe_8x2_hybrid #(32, 16, 8, 2) PE8X2 (
@@ -48,7 +46,7 @@ true_output_ROM YROM (
 wire [36-1 : 0] ERRBUS;
 add36x36signed_sub ERRSUB (
   .dataa({{(4){YTRUEBUS[31]}}, YTRUEBUS}),
-  .datab({{(4){OBUS_PE8X2[31]}}, OBUS_PE8X2[32*2 -1 -: 32]}),
+  .datab({{(4){OBUS_PE8X2[32*2-1]}}, OBUS_PE8X2[32*2 -1 -: 32]}),
   .result(ERRBUS)
 );
 wire [32-1 : 0] ERRBUS_SAT;
@@ -67,8 +65,8 @@ mul32x32to48 ERRMUL (
   .result(ERRSCALED)
 );
 assign ERRSCALED_SAT  = (
-  &ERRSCALED[48-1 -: 9] || ~|ERRSCALED[48-1 -: 9] ?
-  {ERRSCALED[48-1], ERRSCALED[48-9-1 -: 31]} :
+  &ERRSCALED[48-1 -: 13] || ~|ERRSCALED[48-1 -: 13] ?
+  {ERRSCALED[48-1], ERRSCALED[48-13-1 -: 31]} :
   ({1'b0, {(31){1'b1}}} ^ {(32){ERRSCALED[48-1]}})
 );
 
