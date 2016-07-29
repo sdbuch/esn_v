@@ -60,7 +60,8 @@ assign ERRBUS_SAT = (
 wire [48-1:0] ERRSCALED; // Raw product is Q18.45, but we can truncate to Q18.26
 wire [32-1 : 0] ERRSCALED_SAT; // Saturate to Q10.21
 mul32x32to48 ERRMUL (
-  .dataa(OBUS_PE8X2[32*2-32-1 -: 32]),
+  //.dataa(OBUS_PE8X2[32*2-32-1 -: 32]),
+  .dataa(32'h00004000),
   .datab(ERRBUS_SAT),
   .result(ERRSCALED)
 );
