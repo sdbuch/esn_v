@@ -84,8 +84,7 @@ for (n = 0; n < NEU_OUT; n=n+1) begin: PARALLEL_ADDS
       PROD[((NEU_IN*n+7)*(2*WORD_LEN)-1)-:2*WORD_LEN]}
     ),
     .data7x(
-      {{{PROD[((NEU_IN*n+8)*(2*WORD_LEN)-1)]}},
-      PROD[((NEU_IN*n+8)*(2*WORD_LEN)-1)-:2*WORD_LEN], 3'b0}
+      {PROD[((NEU_IN*n+8)*(2*WORD_LEN)-1)-:2*WORD_LEN], 3'b0}
     ),
     .result(
       SUM[((n+1)*((2*WORD_LEN)+6)-1)-:((2*WORD_LEN)+6)]
