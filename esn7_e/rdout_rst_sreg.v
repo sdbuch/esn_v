@@ -67,7 +67,7 @@ module rdout_rst_sreg (
 	defparam
 		LPM_SHIFTREG_component.lpm_direction = "LEFT",
 		LPM_SHIFTREG_component.lpm_type = "LPM_SHIFTREG",
-		LPM_SHIFTREG_component.lpm_width = 42;
+		LPM_SHIFTREG_component.lpm_width = 130;
 
 
 endmodule
@@ -91,12 +91,12 @@ endmodule
 // Retrieval info: PRIVATE: SYNTH_WRAPPER_GEN_POSTFIX STRING "1"
 // Retrieval info: PRIVATE: SerialShiftInput NUMERIC "1"
 // Retrieval info: PRIVATE: SerialShiftOutput NUMERIC "1"
-// Retrieval info: PRIVATE: nBit NUMERIC "42"
+// Retrieval info: PRIVATE: nBit NUMERIC "130"
 // Retrieval info: PRIVATE: new_diagram STRING "1"
 // Retrieval info: LIBRARY: lpm lpm.lpm_components.all
 // Retrieval info: CONSTANT: LPM_DIRECTION STRING "LEFT"
 // Retrieval info: CONSTANT: LPM_TYPE STRING "LPM_SHIFTREG"
-// Retrieval info: CONSTANT: LPM_WIDTH NUMERIC "42"
+// Retrieval info: CONSTANT: LPM_WIDTH NUMERIC "130"
 // Retrieval info: USED_PORT: clock 0 0 0 0 INPUT NODEFVAL "clock"
 // Retrieval info: USED_PORT: shiftin 0 0 0 0 INPUT NODEFVAL "shiftin"
 // Retrieval info: USED_PORT: shiftout 0 0 0 0 OUTPUT NODEFVAL "shiftout"

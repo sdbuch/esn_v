@@ -25,8 +25,8 @@ initial begin: INITS
   clk = 1'b0;
   ce = 1'b1;
   rst_N = 1'b1;     // initialize the system
-  #1 rst_N = 1'b0;
-  #19 rst_N = 1'b1;
+  #4 rst_N = 1'b0;
+  #22 rst_N = 1'b1;
 end
 
 // clock gen

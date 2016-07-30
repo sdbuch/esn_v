@@ -15,7 +15,7 @@ slow_Ctr DIVCNT(
 wire [5:0] addr;
 addr_ctr ACTR (
   .clock(clk),
-  .clk_en(&slowcount),
+  .clk_en(!rst_N || &slowcount),
   .sclr(!rst_N),
   .q(addr)
 );
