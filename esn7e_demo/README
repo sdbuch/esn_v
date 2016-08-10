@@ -1,0 +1,21 @@
+Directory for files:
+./esn7e_demo_proj/software/esn7e_offlinestream_demo/ and
+./esn7e_demo_proj/software/cproj
+
+Command to run after programming FPGA:
+
+nios2-download -g esn7e_offlinestream_demo.elf && nios2-terminal | ./p_helper | ./multiplot.pl 3 2 512 512 500x300+0+0 500x300+0+300 "Input" "Pred. Output" "Calculated Output" 0 1 1 
+
+Steps to take:
+1. Open Quartus
+2. Open Nios II IDE
+3. Open Nios command shell (/opt/altera/13.1/nios2eds/nios2_command_shell.sh)
+4. In Nios command shell, cd to
+./esn7e_demo_proj/software/esn7e_offlinestream_demo/ or wherever the .elf is
+stored
+5. Program the FPGA from inside Nios II IDE. This triggers an ESN reset.
+6. Quickly run the nios2-download compound command above to run the
+microprocessor program and start plotting the ESN data. The device buffers a
+fixed amount of ESN output frames locally, then transmits them over the JTAG
+UART at a reasonable rate. The p_helper command looks at the JTAG UART stream
+and scales the U values to their cubes, for error comparison.
