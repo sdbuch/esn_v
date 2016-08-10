@@ -6,10 +6,14 @@ from subprocess import check_call
 from itertools import chain
 import ipdb
 
-vcd_fn = 'esn_top_tb_v7'
-sig_list = ['esn_top_tb.W_out[255:0]', 'esn_top_tb.est[31:0]']
+#vcd_fn = 'esn_top_tb'
+vcd_fn = 'esn7e_sim_5'
+sig_list = ['esn7e_st_src_tb.data_out[31:0]',
+        'esn7e_st_src_tb.data_valid',
+        'esn7e_st_src_tb.U0.ESN0.W_out[255:0]',
+        'esn7e_st_src_tb.U0.ESN0.XSTATE[127:0]']
 
-word_len_list = 2*[32]
+word_len_list = [16,1,32,16]
 
 def main():
     """

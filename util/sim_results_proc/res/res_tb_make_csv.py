@@ -6,7 +6,7 @@ from subprocess import check_call
 from itertools import chain
 import ipdb
 
-vcd_fn = 'res_tb_withphasealign'
+vcd_fn = 'res_tb_with2inputshifts'
 sig_list = ['res_tb.xstate[127:0]',
         'res_tb.DUT.PE0.DATA[127:0]',
         'res_tb.DUT.PE1.DATA[127:0]',

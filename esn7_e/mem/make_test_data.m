@@ -1,4 +1,4 @@
-writedatfiles = true;
+writedatfiles = false;
 writemiffiles = true;
 
 %% Get some weights in (-1, 1)

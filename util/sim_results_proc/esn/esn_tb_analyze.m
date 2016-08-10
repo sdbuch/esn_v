@@ -22,6 +22,7 @@ in_weights(in_weights>=2^15) = -(2^16-in_weights(in_weights>=2^15));
 
 W_out = WOUT(end,2:end);
 y_hat = YHAT(:,2:end);
+keyboard
 
 
 X = zeros(8,500);
@@ -68,13 +69,28 @@ Wout = yq_train*Xq_train'*((Xq_train*Xq_train')^(-1));
 Nepoch = 1e3;
 Wout_gd = zeros(Nepoch+1,size(Wout,2));
 Wout_gd(1,:) = (2*rand(size(Wout))-1);
+
+% stochastic
 for i=1:Nepoch
   for j = 1:size(Xq_train,2)
+    
     y_est((i-1)*size(Xq_train,2)+j) = Wout_gd((i-1)*size(Xq_train,2)+j,:)*Xq_train(:,j);
-    grad = 2*(y_est((i-1)*size(Xq_train,2)+j)-yq_train(j))*Xq_train(:,j)';
-    step = 1/2*norm(Xq_train(:,j),2).^-2;
+    err((i-1)*size(Xq_train,2)+j) = y_est((i-1)*size(Xq_train,2)+j)-yq_train(j);
+    grad = 2*(err((i-1)*size(Xq_train,2)+j))*Xq_train(:,j)';
+    step = 0.5 * 1/2*norm(Xq_train(:,j),2).^-2;
     Wout_gd((i-1)*size(Xq_train,2)+j+1,:) = Wout_gd((i-1)*size(Xq_train,2)+j,:) - step*grad;
+    grad_last = grad;
   end
 end
 
-
+% batch
+% for i=1:Nepoch
+%   y_est((i-1)*size(Xq_train,2)+j) = Wout_gd((i-1)*size(Xq_train,2)+j,:)*Xq_train(:,j);
+%   for j = 1:size(Xq_train,2)
+%     
+%     grad = 2*(y_est((i-1)*size(Xq_train,2)+j)-yq_train(j))*Xq_train(:,j)';
+%     step = 1/2*norm(Xq_train(:,j),2).^-2;
+%     Wout_gd((i-1)*size(Xq_train,2)+j+1,:) = Wout_gd((i-1)*size(Xq_train,2)+j,:) - step*grad;
+%     grad_last = grad;
+%   end
+% end
