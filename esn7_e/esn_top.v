@@ -1,10 +1,11 @@
-module esn_top(clk, ce, rst_N, est, W_out);
+module esn_top(clk, ce, rst_N, est, W_out, RDOUT_DATA_VALID, U);
 
 input clk;      // System clock
 input rst_N;    // Global sync reset
 input ce;       // Readout output enable (it still trains even when ce is low...)
 output [31:0] est;    // predicted output, from readout
 output [8*32 -1 : 0] W_out;  // learned weights, from readout
+output [15:0] U;      // Reservoir input
 
 wire [5:0] DATA_ADDR;   // lookup address for input/output train data
 wire [8*16-1:0] XSTATE; // extended system state from reservoir
@@ -12,18 +13,21 @@ wire [8*16-1:0] XSTATE; // extended system state from reservoir
 reg rst_pulse_N;
 res_top RESERVOIR (
   .clk(clk),
-  .rst_N(rst_pulse_N),
+  .rst_N(rst_N),
   .XSTATE(XSTATE),
   .ADDR_OUT(DATA_ADDR)
 );
 
+assign U = XSTATE[8*16-1 -: 16];
+
 wire rstdly_N;
 rdout_rst_sreg SREGD (
   .clock(clk),
-  .shiftin(rst_pulse_N),
+  .shiftin(rst_N),
   .shiftout(rstdly_N)
 );
 
+/*
 reg [2:0] count; // 6 cycle reset pulse
 reg [1:0] RSTSTATE;
 reg [1:0] RST_SREG;
@@ -33,7 +37,7 @@ always @(posedge clk) begin: RESET_MON
 end
 
 always @(posedge clk) begin: RESET_NEXTSTATE
-  if (RST_SREG[1] && !RST_SREG[0]) begin: RESET_TRIGGERED
+  if (!RST_SREG[1] && RST_SREG[0]) begin: RESET_RELEASE_TRIGGERED
     RSTSTATE <= 2'b00;
   end else if (RSTSTATE == 2'b00) begin: RESET_INITIALIZED
     RSTSTATE <= 2'b01;
@@ -75,7 +79,9 @@ always @(posedge clk) begin: RESET_SM
     end
   endcase
 end
+*/
 
+output RDOUT_DATA_VALID;
 rdout_top READOUT (
   .clk(clk),
   .ce(ce),
@@ -83,7 +89,8 @@ rdout_top READOUT (
   .XSTATE(XSTATE),
   .addr(DATA_ADDR),
   .est(est),
-  .W_out(W_out)
+  .W_out(W_out),
+  .data_valid(RDOUT_DATA_VALID)
 );
 
 endmodule

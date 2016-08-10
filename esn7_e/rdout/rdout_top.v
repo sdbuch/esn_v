@@ -1,4 +1,4 @@
-module rdout_top(clk, ce, rst_N, XSTATE, addr, est, W_out);
+module rdout_top(clk, ce, rst_N, XSTATE, addr, est, W_out, data_valid);
 
 input clk;
 input rst_N;
@@ -8,6 +8,7 @@ input [5:0] addr;        // Forwarded input address counter value
 
 output reg [31:0] est;   // predicted output at current time
 output reg [32*8 - 1 : 0] W_out; // learned output weights at current time
+output data_valid;
 
 // Strategy:
 //  xstate is available from res after 4 cycles, so we need to complete readout
@@ -202,5 +203,15 @@ always @(posedge clk) begin: OUTPUT_ASSIGN
     end
   endcase
 end
+
+// Create a data valid output in sync with input data
+wire [1:0] slow_count;
+slow_Ctr DVALID_CTR (
+  .clock(clk),
+  .sclr(!rst_N),
+  .q(slow_count)
+);
+
+assign data_valid = slow_count[1] && slow_count[0];
 
 endmodule

@@ -6,13 +6,17 @@ reg ce; // Chip enable for readout only
 reg rst_N;
 wire [31:0] est;
 wire [8*32-1 : 0] W_out;
+wire [15:0] U;
+wire dvalid;
 
 esn_top ESN7e (
   .clk(clk),
   .ce(ce),
   .rst_N(rst_N),
   .est(est),
-  .W_out(W_out)
+  .W_out(W_out),
+  .RDOUT_DATA_VALID(dvalid),
+  .U(U)
 );
 
 initial begin
